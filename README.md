@@ -64,7 +64,10 @@ Chi-square goodness-of-fit test confirms uniform distribution. χ²/df ≈ 1.0 m
 - **Iterator** (`Sampler`): Burn-in once, then thinning steps between samples. Efficient for many samples.
 - **One-shot** (`sample()`): Fresh burn-in with each seed. Fully independent samples.
 
+**Performance:** When generating multiple samples, `Sampler` is ~3x faster than repeated `sample()` calls (n=10, k≥100). This is because `sample()` performs n³ burn-in steps each call, while `Sampler` only does 3n² thinning steps after the initial burn-in.
+
 Verify with: `cargo run --release --example uniformity_test -- <n> [--light] [--oneshot]`
+Benchmark with: `cargo run --release --example benchmark_comparison -- [n]`
 
 ## Independence Verification (Iterator mode)
 

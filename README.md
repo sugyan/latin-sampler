@@ -1,6 +1,6 @@
 # latin-sampler
 
-MCMC sampler for generating approximately uniform Latin squares — n×n arrays where each row and column is a permutation of {0, 1, ..., n−1}.
+MCMC sampler for generating approximately uniform Latin squares — n×n arrays where each row and column is a permutation of {0, 1, ..., n-1}.
 
 ## Features
 

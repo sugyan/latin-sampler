@@ -369,10 +369,10 @@ mod tests {
 
         // For prime n (like 5 and 7), the old cycle moves would be trapped.
         // Jacobson-Matthews should reach many different reduced forms.
-        for n in [5, 7] {
+        for n in [5_usize, 7] {
             let mut reduced_forms: HashSet<Vec<u8>> = HashSet::new();
             let num_samples = 50;
-            let burn_in = (n as usize).pow(3);
+            let burn_in = n.pow(3);
 
             for seed_idx in 0..num_samples {
                 let mut rng = ChaCha20Rng::seed_from_u64(seed_idx as u64);

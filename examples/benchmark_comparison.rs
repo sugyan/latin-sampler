@@ -9,7 +9,7 @@
 //! For generating multiple samples, the iterator is significantly faster due to
 //! amortized burn-in cost.
 
-use latin_sampler::{sample, Sampler, SamplerParams};
+use latin_sampler::{Sampler, SamplerParams, sample};
 use rand::SeedableRng;
 use rand_chacha::ChaCha20Rng;
 use std::env;

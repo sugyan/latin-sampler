@@ -46,7 +46,25 @@ impl LatinSquare {
     pub fn cells(&self) -> &[u8] {
         &self.cells
     }
+}
 
+#[cfg(feature = "serde")]
+impl serde::Serialize for LatinSquare {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeSeq;
+        let mut seq = serializer.serialize_seq(Some(self.n))?;
+        for r in 0..self.n {
+            let row: Vec<u8> = (0..self.n).map(|c| self.cells[r * self.n + c]).collect();
+            seq.serialize_element(&row)?;
+        }
+        seq.end()
+    }
+}
+
+impl LatinSquare {
     /// Returns true if this is a valid Latin square.
     ///
     /// This is a test-only helper for validation. The Latin property is an
@@ -94,6 +112,31 @@ mod tests {
                 "cyclic square of order {} should be Latin",
                 n
             );
+        }
+    }
+}
+
+#[cfg(all(test, feature = "serde"))]
+mod serde_tests {
+    use super::*;
+
+    #[test]
+    fn serialize_cyclic_3x3() {
+        let sq = LatinSquare::new_cyclic(3);
+        let json = serde_json::to_string(&sq).unwrap();
+        assert_eq!(json, "[[0,1,2],[1,2,0],[2,0,1]]");
+    }
+
+    #[test]
+    fn serialize_cyclic_various_sizes() {
+        for n in 2..=10 {
+            let sq = LatinSquare::new_cyclic(n);
+            let json = serde_json::to_string(&sq).unwrap();
+            let parsed: Vec<Vec<u8>> = serde_json::from_str(&json).unwrap();
+            assert_eq!(parsed.len(), n);
+            for row in &parsed {
+                assert_eq!(row.len(), n);
+            }
         }
     }
 }

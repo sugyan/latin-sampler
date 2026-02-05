@@ -84,7 +84,7 @@ pub fn sample<R: Rng + ?Sized>(n: usize, rng: &mut R, params: &SamplerParams) ->
 /// use rand_chacha::ChaCha20Rng;
 /// use rand::SeedableRng;
 ///
-/// let rng = ChaCha20Rng::from_seed([0u8; 32]);
+/// let rng = ChaCha20Rng::seed_from_u64(0);
 /// let params = SamplerParams::default();
 /// let sampler = Sampler::new(7, rng, params);
 ///
@@ -186,13 +186,12 @@ mod tests {
 
     #[test]
     fn reproducibility_same_seed_same_output() {
-        let seed = [0u8; 32];
         let params = quick_params();
 
-        let mut rng1 = ChaCha20Rng::from_seed(seed);
+        let mut rng1 = ChaCha20Rng::seed_from_u64(0);
         let sq1 = sample(7, &mut rng1, &params);
 
-        let mut rng2 = ChaCha20Rng::from_seed(seed);
+        let mut rng2 = ChaCha20Rng::seed_from_u64(0);
         let sq2 = sample(7, &mut rng2, &params);
 
         assert_eq!(sq1, sq2, "Same seed should produce identical squares");
@@ -203,16 +202,11 @@ mod tests {
         let params = quick_params();
 
         // Try a few different seed pairs
-        for offset in 0u8..5 {
-            let mut seed1 = [0u8; 32];
-            seed1[0] = offset;
-            let mut seed2 = [0u8; 32];
-            seed2[0] = offset + 100;
-
-            let mut rng1 = ChaCha20Rng::from_seed(seed1);
+        for offset in 0u64..5 {
+            let mut rng1 = ChaCha20Rng::seed_from_u64(offset);
             let sq1 = sample(7, &mut rng1, &params);
 
-            let mut rng2 = ChaCha20Rng::from_seed(seed2);
+            let mut rng2 = ChaCha20Rng::seed_from_u64(offset + 100);
             let sq2 = sample(7, &mut rng2, &params);
 
             if sq1 != sq2 {
@@ -224,14 +218,13 @@ mod tests {
 
     #[test]
     fn iterator_reproducibility() {
-        let seed = [0u8; 32];
         let params = quick_params();
 
         // Create two samplers with the same seed
-        let rng1 = ChaCha20Rng::from_seed(seed);
+        let rng1 = ChaCha20Rng::seed_from_u64(0);
         let sampler1 = Sampler::new(5, rng1, params.clone());
 
-        let rng2 = ChaCha20Rng::from_seed(seed);
+        let rng2 = ChaCha20Rng::seed_from_u64(0);
         let sampler2 = Sampler::new(5, rng2, params);
 
         // Take 10 samples from each
@@ -246,8 +239,6 @@ mod tests {
 
     #[test]
     fn iterator_thinning_spacing() {
-        let seed = [0u8; 32];
-
         // Create params with different thinning values
         let params_thin1 = SamplerParams {
             burn_in: Some(1000),
@@ -260,10 +251,10 @@ mod tests {
             ..Default::default()
         };
 
-        let rng1 = ChaCha20Rng::from_seed(seed);
+        let rng1 = ChaCha20Rng::seed_from_u64(0);
         let sampler1 = Sampler::new(5, rng1, params_thin1);
 
-        let rng2 = ChaCha20Rng::from_seed(seed);
+        let rng2 = ChaCha20Rng::seed_from_u64(0);
         let sampler2 = Sampler::new(5, rng2, params_thin100);
 
         // Take 5 samples from each

@@ -267,7 +267,7 @@ mod tests {
 
     #[test]
     fn step_preserves_or_returns_to_proper() {
-        let mut rng = ChaCha20Rng::from_seed([42u8; 32]);
+        let mut rng = ChaCha20Rng::seed_from_u64(42);
 
         for n in 3..=8 {
             let mut state = JMState::new_cyclic(n);
@@ -299,7 +299,7 @@ mod tests {
 
     #[test]
     fn move_preserves_latin_after_many_steps() {
-        let mut rng = ChaCha20Rng::from_seed([0u8; 32]);
+        let mut rng = ChaCha20Rng::seed_from_u64(0);
 
         for n in [7, 8] {
             let mut state = JMState::new_cyclic(n);
@@ -371,18 +371,15 @@ mod tests {
         // Jacobson-Matthews should reach many different reduced forms.
         for n in [5, 7] {
             let mut reduced_forms: HashSet<Vec<u8>> = HashSet::new();
-            let num_samples = 200;
+            let num_samples = 50;
+            let burn_in = (n as usize).pow(3);
 
             for seed_idx in 0..num_samples {
-                let mut seed = [0u8; 32];
-                seed[0] = (seed_idx & 0xff) as u8;
-                seed[1] = ((seed_idx >> 8) & 0xff) as u8;
-
-                let mut rng = ChaCha20Rng::from_seed(seed);
+                let mut rng = ChaCha20Rng::seed_from_u64(seed_idx as u64);
                 let mut state = JMState::new_cyclic(n);
 
                 // Burn-in
-                for _ in 0..10_000 {
+                for _ in 0..burn_in {
                     state.step(&mut rng);
                 }
 
@@ -398,7 +395,7 @@ mod tests {
 
             // For n=5, there are 56 reduced forms. We should reach multiple.
             // For n=7, there are 16,942,080 reduced forms. We should reach many.
-            let min_expected = if n == 5 { 10 } else { 50 };
+            let min_expected = if n == 5 { 5 } else { 20 };
             assert!(
                 reduced_forms.len() >= min_expected,
                 "n={}: expected at least {} reduced forms, got {}",

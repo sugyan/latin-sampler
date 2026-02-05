@@ -354,10 +354,9 @@ mod tests {
 
         // Apply row permutation
         let mut reduced = Vec::with_capacity(n * n);
-        for new_r in 0..n {
-            let old_r = row_perm[new_r];
-            for c in 0..n {
-                reduced.push(permuted[old_r][c]);
+        for &old_r in &row_perm {
+            for &val in &permuted[old_r] {
+                reduced.push(val);
             }
         }
 

@@ -1,6 +1,12 @@
 # latin-sampler
 
-MCMC sampler for generating approximately uniform Latin squares.
+MCMC sampler for generating approximately uniform Latin squares — n×n arrays where each row and column is a permutation of {0, 1, ..., n−1}.
+
+## Features
+
+- **Approximately uniform** — Jacobson-Matthews algorithm with verified uniformity (χ²/df ≈ 1.0)
+- **Reproducible** — Deterministic output with seed specification
+- **Efficient** — Iterator mode is ~3x faster than one-shot for bulk sampling (amortized burn-in)
 
 ## Algorithm
 

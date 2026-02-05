@@ -18,6 +18,7 @@ cargo run --release --example generate -- <n> [seed]     # Generate a Latin squa
 cargo run --release --example uniformity_test -- <n>     # Chi-square uniformity test
 cargo run --release --example independence_check         # Autocorrelation analysis
 cargo run --release --example benchmark_comparison -- [n] # sample() vs Sampler comparison
+cargo run --release --example coverage -- [n] [max_samples] [--oneshot]  # Coverage check for small n
 ```
 
 ## Architecture

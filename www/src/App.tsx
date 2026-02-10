@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import init, { generate, WasmSampler } from "latin-sampler";
-
-type Mode = "oneshot" | "sampler";
+import init, { WasmSampler } from "latin-sampler";
 
 function cellColor(value: number, n: number): string {
   const hue = (value / n) * 360;
@@ -10,10 +8,11 @@ function cellColor(value: number, n: number): string {
 
 function App() {
   const [ready, setReady] = useState(false);
-  const [mode, setMode] = useState<Mode>("oneshot");
   const [n, setN] = useState(5);
   const [seed, setSeed] = useState(42);
   const [grid, setGrid] = useState<number[][] | null>(null);
+  const [sampleNumber, setSampleNumber] = useState(0);
+  const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const samplerRef = useRef<WasmSampler | null>(null);
 
@@ -28,34 +27,20 @@ function App() {
     };
   }, []);
 
-  const handleGenerate = () => {
-    setError(null);
-    try {
-      const result = generate(n, BigInt(seed));
-      setGrid(result);
-    } catch (e) {
-      setError(String(e));
-    }
-  };
+  const needsReset = !samplerRef.current || dirty;
 
-  const handleCreateSampler = () => {
+  const handleClick = () => {
     setError(null);
     try {
-      samplerRef.current?.free();
-      samplerRef.current = new WasmSampler(n, BigInt(seed));
-      const result = samplerRef.current.next();
+      if (needsReset) {
+        samplerRef.current?.free();
+        samplerRef.current = new WasmSampler(n, BigInt(seed));
+        setDirty(false);
+        setSampleNumber(0);
+      }
+      const result = samplerRef.current!.next();
       setGrid(result);
-    } catch (e) {
-      setError(String(e));
-    }
-  };
-
-  const handleNext = () => {
-    setError(null);
-    try {
-      if (!samplerRef.current) return;
-      const result = samplerRef.current.next();
-      setGrid(result);
+      setSampleNumber((prev) => prev + 1);
     } catch (e) {
       setError(String(e));
     }
@@ -69,30 +54,18 @@ function App() {
     <>
       <h1>Latin Sampler Demo</h1>
 
-      <div className="mode-toggle">
-        <button
-          className={mode === "oneshot" ? "active" : ""}
-          onClick={() => setMode("oneshot")}
-        >
-          One-shot
-        </button>
-        <button
-          className={mode === "sampler" ? "active" : ""}
-          onClick={() => setMode("sampler")}
-        >
-          Sampler
-        </button>
-      </div>
-
       <div className="controls">
         <label>
-          n (2-255)
+          n (2-20)
           <input
             type="number"
             min={2}
-            max={255}
+            max={20}
             value={n}
-            onChange={(e) => setN(Number(e.target.value))}
+            onChange={(e) => {
+              setN(Number(e.target.value));
+              setDirty(true);
+            }}
           />
         </label>
         <label>
@@ -101,40 +74,37 @@ function App() {
             type="number"
             min={0}
             value={seed}
-            onChange={(e) => setSeed(Number(e.target.value))}
+            onChange={(e) => {
+              setSeed(Number(e.target.value));
+              setDirty(true);
+            }}
           />
         </label>
-        {mode === "oneshot" ? (
-          <button onClick={handleGenerate}>Generate</button>
-        ) : (
-          <>
-            <button onClick={handleCreateSampler}>Create Sampler</button>
-            <button onClick={handleNext} disabled={!samplerRef.current}>
-              Next
-            </button>
-          </>
-        )}
+        <button onClick={handleClick}>{needsReset ? "Generate" : "Next"}</button>
       </div>
 
       {error && <p className="error">{error}</p>}
 
       {grid && (
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: `repeat(${grid.length}, 40px)` }}
-        >
-          {grid.flatMap((row, i) =>
-            row.map((val, j) => (
-              <div
-                key={`${i}-${j}`}
-                className="cell"
-                style={{ backgroundColor: cellColor(val, grid.length) }}
-              >
-                {val}
-              </div>
-            ))
-          )}
-        </div>
+        <>
+          <p className="sample-number">#{sampleNumber}</p>
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: `repeat(${grid.length}, 40px)` }}
+          >
+            {grid.flatMap((row, i) =>
+              row.map((val, j) => (
+                <div
+                  key={`${i}-${j}`}
+                  className="cell"
+                  style={{ backgroundColor: cellColor(val, grid.length) }}
+                >
+                  {val}
+                </div>
+              ))
+            )}
+          </div>
+        </>
       )}
     </>
   );

@@ -56,25 +56,10 @@ h1 {
   cursor: not-allowed;
 }
 
-.mode-toggle {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-
-.mode-toggle button {
-  padding: 4px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.mode-toggle button.active {
-  background: #213547;
-  color: #fff;
-  border-color: #213547;
+.sample-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
 }
 
 .grid {

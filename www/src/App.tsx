@@ -3,14 +3,11 @@ import init, { WasmSampler } from "latin-sampler";
 
 function cellColor(value: number, n: number): string {
   const hue = (value / n) * 360;
-  return `hsl(${hue}, 75%, 55%)`;
+  return `oklch(0.72 0.16 ${hue})`;
 }
 
 function cellSize(n: number): number {
-  if (n <= 5) return 56;
-  if (n <= 10) return 44;
-  if (n <= 15) return 36;
-  return 28;
+  return Math.min(56, Math.max(20, Math.round(400 / n)));
 }
 
 function App() {
@@ -22,6 +19,7 @@ function App() {
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSampler, setHasSampler] = useState(false);
+  const [hoverValue, setHoverValue] = useState<number | null>(null);
   const samplerRef = useRef<WasmSampler | null>(null);
 
   useEffect(() => {
@@ -127,28 +125,51 @@ function App() {
               </span>
             </p>
             <div
-              className="inline-grid gap-0.5"
+              className="inline-grid rounded-xl"
               style={{
                 gridTemplateColumns: `repeat(${grid.length}, ${size}px)`,
+                gap: grid.length <= 10 ? "3px" : "2px",
+                background: "oklch(0.18 0.01 260)",
+                border: "1px solid oklch(0.3 0.02 260)",
+                padding: grid.length <= 10 ? "3px" : "2px",
               }}
+              onMouseLeave={() => setHoverValue(null)}
             >
               {grid.flatMap((row, i) =>
-                row.map((val, j) => (
-                  <div
-                    key={`${i}-${j}`}
-                    className="flex items-center justify-center rounded-lg font-semibold text-white animate-scale-in"
-                    style={{
-                      width: size,
-                      height: size,
-                      fontSize: size <= 28 ? "0.7rem" : "0.85rem",
-                      backgroundColor: cellColor(val, grid.length),
-                      textShadow: "0 1px 2px rgba(0,0,0,0.4)",
-                      transition: "background-color 0.3s ease",
-                    }}
-                  >
-                    {val}
-                  </div>
-                ))
+                row.map((val, j) => {
+                  const dimmed =
+                    hoverValue !== null && hoverValue !== val;
+                  const addDepth = grid.length <= 15;
+                  return (
+                    <div
+                      key={`${i}-${j}`}
+                      className="flex items-center justify-center font-semibold text-white animate-scale-in"
+                      style={{
+                        width: size,
+                        height: size,
+                        borderRadius: Math.round(size * 0.1),
+                        fontSize: `${Math.max(10, Math.round(size * 0.35))}px`,
+                        backgroundColor: cellColor(val, grid.length),
+                        textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+                        opacity: dimmed ? 0.25 : 1,
+                        transition:
+                          "opacity 0.15s ease, background-color 0.3s ease",
+                        border: addDepth
+                          ? "1px solid rgba(255,255,255,0.1)"
+                          : "none",
+                        boxShadow: addDepth
+                          ? "inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 4px rgba(0,0,0,0.3)"
+                          : "0 1px 3px rgba(0,0,0,0.2)",
+                        animationDelay: `${i * 40}ms`,
+                        animationFillMode: "backwards",
+                        cursor: "default",
+                      }}
+                      onMouseEnter={() => setHoverValue(val)}
+                    >
+                      {val}
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>

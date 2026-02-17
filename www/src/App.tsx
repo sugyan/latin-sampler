@@ -37,9 +37,14 @@ function App() {
 
   const handleClick = () => {
     setError(null);
+    if (n < 2 || n > 255) {
+      setError("n must be between 2 and 255");
+      return;
+    }
     try {
       if (needsReset) {
         samplerRef.current?.free();
+        samplerRef.current = null;
         samplerRef.current = new WasmSampler(n, BigInt(seed));
         setHasSampler(true);
         setDirty(false);

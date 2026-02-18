@@ -30,6 +30,7 @@ function App() {
     return () => {
       samplerRef.current?.free();
       samplerRef.current = null;
+      setHasSampler(false);
     };
   }, []);
 
@@ -37,8 +38,8 @@ function App() {
 
   const handleClick = () => {
     setError(null);
-    if (n < 2 || n > 255) {
-      setError("n must be between 2 and 255");
+    if (n < 2 || n > 20) {
+      setError("n must be between 2 and 20");
       return;
     }
     try {
@@ -54,7 +55,7 @@ function App() {
       setGrid(result);
       setSampleNumber((prev) => prev + 1);
     } catch (e) {
-      setError(String(e));
+      setError(e instanceof Error ? e.message : String(e));
     }
   };
 
@@ -110,7 +111,8 @@ function App() {
           </label>
           <button
             onClick={handleClick}
-            className="px-5 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!ready}
+            className="px-5 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {needsReset ? "Generate" : "Next"}
           </button>

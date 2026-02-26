@@ -21,6 +21,13 @@ cargo run --release --example benchmark_comparison -- [n] # sample() vs Sampler 
 cargo run --release --example coverage -- [n] [max_samples] [--oneshot]  # Coverage check for small n
 ```
 
+### WASM / Demo Site
+
+```bash
+wasm-pack build --target web       # Build wasm package
+cd www && npm ci && npm run build   # Build demo site
+```
+
 ## Architecture
 
 This is an MCMC sampler for generating approximately uniform Latin squares using the Jacobson-Matthews algorithm.
@@ -34,6 +41,8 @@ This is an MCMC sampler for generating approximately uniform Latin squares using
   - `Sampler`: Iterator that performs burn-in once, then uses thinning between samples
 
 - **`square.rs`**: `LatinSquare` type representing an n×n array where each row and column is a permutation of {0..n-1}.
+
+- **`wasm.rs`** (cfg wasm32 only): `wasm-bindgen` bindings for JavaScript. Exposes `generate()` and `WasmSampler` for the demo site.
 
 ### Key Concepts
 

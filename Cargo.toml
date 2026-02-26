@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 license = "MIT"
+description = "An MCMC sampler for generating approximately uniform random Latin squares using the Jacobson-Matthews algorithm"
+repository = "https://github.com/sugyan/latin-sampler"
+keywords = ["latin-square", "mcmc", "combinatorics", "jacobson-matthews"]
+categories = ["algorithms", "mathematics"]
+exclude = ["www/", "pkg/", ".github/"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]

@@ -13,7 +13,7 @@ impl LatinSquare {
     ///
     /// # Panics
     /// Panics if `n < 2` or `n > 255`.
-    pub fn new_cyclic(n: usize) -> Self {
+    pub(crate) fn new_cyclic(n: usize) -> Self {
         assert!((2..=255).contains(&n), "n must be in range 2..=255");
         let cells = (0..n)
             .flat_map(|r| (0..n).map(move |c| ((r + c) % n) as u8))

@@ -49,8 +49,7 @@ impl JMState {
 
     /// Convert to a LatinSquare. Only valid if proper.
     ///
-    /// # Panics
-    /// Panics if the state is improper.
+    /// In debug builds, panics if the state is improper.
     pub fn to_latin_square(&self) -> LatinSquare {
         debug_assert!(self.is_proper(), "cannot convert improper state");
         let n = self.n;

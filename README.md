@@ -22,7 +22,7 @@ latin-sampler = "0.1"
 ```
 
 Optional features:
-- `serde` — Enable serialization/deserialization for `LatinSquare`
+- `serde` — Enable serialization for `LatinSquare`
 
 ## Algorithm
 

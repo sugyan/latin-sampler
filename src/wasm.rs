@@ -12,8 +12,9 @@ fn latin_square_to_js(sq: &LatinSquare) -> Result<JsValue, JsError> {
     serde_wasm_bindgen::to_value(&rows).map_err(|e| JsError::new(&e.to_string()))
 }
 
-/// Generate a Latin square of order n with the given seed.
-/// Returns a 2D array directly usable in JavaScript.
+/// Generate a Latin square of order `n` with the given seed.
+///
+/// `n` must be in range 2..=255. Returns a 2D array directly usable in JavaScript.
 #[wasm_bindgen]
 pub fn generate(n: u8, seed: u64) -> Result<JsValue, JsError> {
     if n < 2 {

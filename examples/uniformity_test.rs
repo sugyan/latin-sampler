@@ -73,12 +73,7 @@ fn main() {
     println!("  burn_in = n³ = {} (auto)", n * n * n);
     println!();
 
-    // Use higher thinning to reduce correlation between consecutive samples
-    // in a single MCMC chain. n³ steps between samples ensures near-independence.
-    let params = SamplerParams {
-        thinning: Some((2 * n) as u64),
-        ..Default::default()
-    };
+    let params = SamplerParams::default();
     run_pilot_bucket_test(
         n,
         pilot_samples,

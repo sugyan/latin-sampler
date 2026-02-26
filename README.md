@@ -1,5 +1,10 @@
 # latin-sampler
 
+[![Crates.io](https://img.shields.io/crates/v/latin-sampler)](https://crates.io/crates/latin-sampler)
+[![docs.rs](https://img.shields.io/docsrs/latin-sampler)](https://docs.rs/latin-sampler)
+[![CI](https://github.com/sugyan/latin-sampler/actions/workflows/rust.yml/badge.svg)](https://github.com/sugyan/latin-sampler/actions/workflows/rust.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 MCMC sampler for generating approximately uniform Latin squares — n×n arrays where each row and column is a permutation of {0, 1, ..., n-1}.
 
 ## Features
@@ -7,6 +12,17 @@ MCMC sampler for generating approximately uniform Latin squares — n×n arrays 
 - **Approximately uniform** — Jacobson-Matthews algorithm with verified uniformity (χ²/df ≈ 1.0)
 - **Reproducible** — Deterministic output with seed specification
 - **Efficient** — Iterator mode is ~3x faster than one-shot for bulk sampling (amortized burn-in)
+- **WebAssembly support** — [Try the interactive demo](https://sugyan.github.io/latin-sampler/)
+
+## Installation
+
+```toml
+[dependencies]
+latin-sampler = "0.1"
+```
+
+Optional features:
+- `serde` — Enable serialization for `LatinSquare`
 
 ## Algorithm
 
@@ -101,3 +117,4 @@ Verify with: `cargo run --release --example independence_check`
 - Output is deterministic given the same seed and parameters
 - Default burn_in (n³) and thinning (3n²) are empirically validated for n ≤ 26
 - For custom thinning: `SamplerParams { thinning: Some(100), ..Default::default() }`
+- Requires Rust 1.85+ (edition 2024)

@@ -54,3 +54,7 @@ This is an MCMC sampler for generating approximately uniform Latin squares using
 
 - Order n must be in range 2..=255 (stored as u8)
 - Requires Rust 1.85+ (edition 2024)
+
+### Release
+
+- Versioning is managed automatically by `release-plz`. Do not manually update the `version` field in `Cargo.toml`.

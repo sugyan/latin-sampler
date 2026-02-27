@@ -16,9 +16,6 @@ pub struct SamplerParams {
     /// though not rigorously proven. Using n³ provides good uniformity
     /// in practice.
     pub burn_in: Option<u64>,
-    /// Number of steps between successive samples (for iterator mode, v0.2+).
-    /// Not used by one-shot `sample()`.
-    pub steps: u64,
     /// Thinning factor: steps between successive samples.
     ///
     /// If `None`, uses 3×n² for approximate independence. Based on ACF
@@ -31,8 +28,7 @@ pub struct SamplerParams {
 impl Default for SamplerParams {
     fn default() -> Self {
         Self {
-            burn_in: None, // auto: n³
-            steps: 1_000,
+            burn_in: None,  // auto: n³
             thinning: None, // auto: 3×n²
             p_do_nothing: 0.01,
         }
@@ -178,7 +174,6 @@ mod tests {
     fn quick_params() -> SamplerParams {
         SamplerParams {
             burn_in: Some(1000),
-            steps: 500,
             thinning: Some(1),
             p_do_nothing: 0.01,
         }

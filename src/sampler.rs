@@ -28,7 +28,7 @@ pub struct SamplerParams {
 impl Default for SamplerParams {
     fn default() -> Self {
         Self {
-            burn_in: None, // auto: n³
+            burn_in: None,  // auto: n³
             thinning: None, // auto: 3×n²
             p_do_nothing: 0.01,
         }
